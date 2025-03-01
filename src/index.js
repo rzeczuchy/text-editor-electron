@@ -22,8 +22,6 @@ const createWindow = () => {
     },
   });
 
-  console.log(webContents.getAllWebContents());
-
   const template = [
     // { role: 'fileMenu' }
     {
@@ -32,7 +30,7 @@ const createWindow = () => {
         {
           label: "New File",
           accelerator: "CmdOrCtrl+N",
-          click() {
+          click: () => {
             // action for new file menu item
           },
         },
@@ -54,14 +52,14 @@ const createWindow = () => {
         {
           label: "Save",
           accelerator: "CmdOrCtrl+S",
-          click() {
+          click: () => {
             // action for save menu item
           },
         },
         {
           label: "Save As...",
           accelerator: "CmdOrCtrl+Shift+S",
-          click() {
+          click: () => {
             // action for save as menu item
           },
         },
