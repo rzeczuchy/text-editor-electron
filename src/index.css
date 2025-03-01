@@ -2,8 +2,8 @@
   --form-height: 1.5em;
   --normal-spacing: 0.5em;
   --color-dark: #222;
-  --color-medium: #555;
-  --color-light: #bbb;
+  --color-medium: #777;
+  --color-light: #ddd;
 }
 
 * {
@@ -27,7 +27,7 @@ button {
   background-color: var(--color-dark);
   color: var(--color-light);
   font-family: inherit;
-  border: 1px solid var(--color-light);
+  border: 1px solid var(--color-medium);
 }
 
 #controls {
@@ -38,8 +38,8 @@ button {
   align-items: center;
 }
 
-#controls button {
-  margin-left: var(--normal-spacing);
+#controls button:not(:last-child) {
+  margin-right: var(--normal-spacing);
 }
 
 #pathInput {
