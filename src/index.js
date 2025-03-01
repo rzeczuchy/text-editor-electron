@@ -1,9 +1,17 @@
-const { app, BrowserWindow } = require("electron");
-const { readFile } = require("node:fs");
+const { app, ipcMain, dialog, BrowserWindow } = require("electron");
+const { readFileSync } = require("node:fs");
 const path = require("node:path");
 
 if (require("electron-squirrel-startup")) {
   app.quit();
+}
+
+async function handleFileOpen() {
+  const { canceled, filePaths } = await dialog.showOpenDialog({});
+  if (!canceled) {
+    const data = readFileSync(filePaths[0], "utf8");
+    return data;
+  }
 }
 
 const createWindow = () => {
@@ -19,17 +27,13 @@ const createWindow = () => {
 };
 
 app.whenReady().then(() => {
+  ipcMain.handle("dialog:openFile", handleFileOpen);
   createWindow();
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
     }
-  });
-
-  readFile("./test.txt", "utf8", (err, data) => {
-    if (err) throw err;
-    console.log(data);
   });
 });
 
