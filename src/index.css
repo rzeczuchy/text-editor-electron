@@ -1,5 +1,4 @@
 :root {
-  --form-height: 1.5em;
   --normal-spacing: 0.5em;
   --color-dark: #222;
   --color-medium: #777;
@@ -30,34 +29,11 @@ button {
   border: 1px solid var(--color-medium);
 }
 
-#controls {
-  height: var(--form-height);
-  margin-bottom: var(--normal-spacing);
-  font-family: inherit;
-  display: flex;
-  align-items: center;
-}
-
-#controls button:not(:last-child) {
-  margin-right: var(--normal-spacing);
-}
-
-#pathInput {
-  background-color: var(--color-dark);
-  color: var(--color-light);
-  border: 1px solid var(--color-light);
-  font-family: inherit;
-}
-
-#pathInput:focus {
-  outline: none;
-}
-
 #mainTextArea {
   resize: none;
   margin: 0;
   border: 1px solid var(--color-medium);
-  height: calc(100vh - var(--form-height) - 3 * var(--normal-spacing));
+  height: calc(100vh - 2 * var(--normal-spacing));
   width: 100%;
   background-color: var(--color-dark);
   color: var(--color-light);
