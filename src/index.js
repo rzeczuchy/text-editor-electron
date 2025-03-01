@@ -6,13 +6,16 @@ if (require("electron-squirrel-startup")) {
   app.quit();
 }
 
+function setWindowTitle(webContents, title) {
+  const win = BrowserWindow.fromWebContents(webContents);
+  win.setTitle(title);
+}
+
 async function handleFileOpen(e) {
   const { canceled, filePaths } = await dialog.showOpenDialog({});
   if (!canceled) {
     const path = filePaths[0];
-    const webContents = e.sender;
-    const win = BrowserWindow.fromWebContents(webContents);
-    win.setTitle(path);
+    setWindowTitle(e.sender, path);
     const data = readFileSync(path, "utf8");
     return data;
   }
