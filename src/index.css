@@ -1,6 +1,8 @@
 :root {
-  --footer-height: 20px;
+  --form-height: 1.5em;
+  --normal-spacing: 0.5em;
   --color-dark: #222;
+  --color-medium: #555;
   --color-light: #bbb;
 }
 
@@ -13,17 +15,49 @@
 
 body {
   width: 100%;
-  background-color: var(--color-dark);
+  min-height: 100vh;
+  padding: var(--normal-spacing);
   overflow: hidden;
+  background-color: var(--color-dark);
+  color: var(--color-light);
+  font-family: "Courier New", Courier, monospace;
 }
 
-textarea {
+button {
+  background-color: var(--color-dark);
+  color: var(--color-light);
+  font-family: inherit;
+  border: 1px solid var(--color-light);
+}
+
+#controls {
+  height: var(--form-height);
+  margin-bottom: var(--normal-spacing);
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+}
+
+#controls button {
+  margin-left: var(--normal-spacing);
+}
+
+#pathInput {
+  background-color: var(--color-dark);
+  color: var(--color-light);
+  border: 1px solid var(--color-light);
+  font-family: inherit;
+}
+
+#pathInput:focus {
+  outline: none;
+}
+
+#mainTextArea {
   resize: none;
   margin: 0;
-  padding-top: 0.5em;
-  padding-left: 0.5em;
-  border: 1px solid var(--color-dark);
-  height: 100vh;
+  border: 1px solid var(--color-medium);
+  height: calc(100vh - var(--form-height) - 3 * var(--normal-spacing));
   width: 100%;
   background-color: var(--color-dark);
   color: var(--color-light);
@@ -32,7 +66,6 @@ textarea {
   font-size: 1.2em;
 }
 
-textarea:focus {
-  border: none;
+#mainTextArea:focus {
   outline: none;
 }
