@@ -50,7 +50,10 @@ const template = [
       { role: "zoomIn" },
       { role: "zoomOut" },
       { type: "separator" },
-      { role: "togglefullscreen" },
+      // TODO: remove
+      { role: "reload" },
+      { role: "forceReload" },
+      { role: "toggleDevTools" },
     ],
   },
 ];
