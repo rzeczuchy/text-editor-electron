@@ -6,7 +6,7 @@ const {
   BrowserWindow,
   webContents,
 } = require("electron");
-const { readFileSync } = require("node:fs");
+const { readFile } = require("node:fs");
 const path = require("node:path");
 
 if (require("electron-squirrel-startup")) {
@@ -42,9 +42,11 @@ const createWindow = () => {
             const { canceled, filePaths } = await dialog.showOpenDialog({});
             if (!canceled) {
               const path = filePaths[0];
-              mainWindow.setTitle(path);
-              const data = readFileSync(path, "utf8");
-              mainWindow.webContents.send("open-file", data);
+              readFile(path, "utf8", (err, data) => {
+                if (err) throw err;
+                mainWindow.webContents.send("open-file", data);
+                mainWindow.setTitle(path);
+              });
             }
           },
         },
