@@ -1,4 +1,4 @@
-const { app, ipcMain, dialog, BrowserWindow } = require("electron");
+const { app, ipcMain, dialog, Menu, BrowserWindow } = require("electron");
 const { readFileSync } = require("node:fs");
 const path = require("node:path");
 
@@ -20,6 +20,43 @@ async function handleFileOpen(e) {
     return data;
   }
 }
+
+const template = [
+  // { role: 'fileMenu' }
+  {
+    label: "File",
+    submenu: [{ role: "quit" }],
+  },
+  // { role: 'editMenu' }
+  {
+    label: "Edit",
+    submenu: [
+      { role: "undo" },
+      { role: "redo" },
+      { type: "separator" },
+      { role: "cut" },
+      { role: "copy" },
+      { role: "paste" },
+      { role: "delete" },
+      { type: "separator" },
+      { role: "selectAll" },
+    ],
+  },
+  // { role: 'viewMenu' }
+  {
+    label: "View",
+    submenu: [
+      { role: "resetZoom" },
+      { role: "zoomIn" },
+      { role: "zoomOut" },
+      { type: "separator" },
+      { role: "togglefullscreen" },
+    ],
+  },
+];
+
+const menu = Menu.buildFromTemplate(template);
+Menu.setApplicationMenu(menu);
 
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
