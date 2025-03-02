@@ -1,11 +1,4 @@
-const {
-  app,
-  ipcMain,
-  dialog,
-  Menu,
-  BrowserWindow,
-  webContents,
-} = require("electron");
+const { app, dialog, Menu, BrowserWindow, webContents } = require("electron");
 const { readFile } = require("node:fs");
 const path = require("node:path");
 
@@ -94,7 +87,7 @@ const createMenuTemplate = (mainWindow) => {
 
   const menu = Menu.buildFromTemplate(template);
   return menu;
-}
+};
 
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
