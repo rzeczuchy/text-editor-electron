@@ -13,15 +13,7 @@ if (require("electron-squirrel-startup")) {
   app.quit();
 }
 
-const createWindow = () => {
-  const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
-    },
-  });
-
+const createMenuTemplate = (mainWindow) => {
   const template = [
     // { role: 'fileMenu' }
     {
@@ -101,6 +93,19 @@ const createWindow = () => {
   ];
 
   const menu = Menu.buildFromTemplate(template);
+  return menu;
+}
+
+const createWindow = () => {
+  const mainWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      preload: path.join(__dirname, "preload.js"),
+    },
+  });
+
+  const menu = createMenuTemplate(mainWindow);
   Menu.setApplicationMenu(menu);
 
   mainWindow.loadFile(path.join(__dirname, "index.html"));
