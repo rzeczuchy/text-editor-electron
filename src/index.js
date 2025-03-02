@@ -6,6 +6,24 @@ if (require("electron-squirrel-startup")) {
   app.quit();
 }
 
+const newFile = (mainWindow) => {};
+
+const openFile = async (mainWindow) => {
+  const { canceled, filePaths } = await dialog.showOpenDialog({});
+  if (!canceled) {
+    const path = filePaths[0];
+    readFile(path, "utf8", (err, data) => {
+      if (err) throw err;
+      mainWindow.webContents.send("open-file", data);
+      mainWindow.setTitle(path);
+    });
+  }
+};
+
+const saveFile = (mainWindow) => {};
+
+const saveFileAs = (mainWindow) => {};
+
 const createMenuTemplate = (mainWindow) => {
   const template = [
     // { role: 'fileMenu' }
@@ -16,23 +34,15 @@ const createMenuTemplate = (mainWindow) => {
           label: "New File",
           accelerator: "CmdOrCtrl+N",
           click: () => {
-            // action for new file menu item
+            newFile(mainWindow);
           },
         },
         { type: "separator" },
         {
           label: "Open File",
           accelerator: "CmdOrCtrl+O",
-          click: async () => {
-            const { canceled, filePaths } = await dialog.showOpenDialog({});
-            if (!canceled) {
-              const path = filePaths[0];
-              readFile(path, "utf8", (err, data) => {
-                if (err) throw err;
-                mainWindow.webContents.send("open-file", data);
-                mainWindow.setTitle(path);
-              });
-            }
+          click: () => {
+            openFile(mainWindow);
           },
         },
         { type: "separator" },
@@ -40,14 +50,14 @@ const createMenuTemplate = (mainWindow) => {
           label: "Save",
           accelerator: "CmdOrCtrl+S",
           click: () => {
-            // action for save menu item
+            saveFile(mainWindow);
           },
         },
         {
           label: "Save As...",
           accelerator: "CmdOrCtrl+Shift+S",
           click: () => {
-            // action for save as menu item
+            saveFileAs(mainWindow);
           },
         },
         { type: "separator" },
