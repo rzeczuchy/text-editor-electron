@@ -1,12 +1,14 @@
+import { insertTabAtSelection } from "./rendererUtils.js";
+
 const textArea = document.getElementById("mainTextArea");
 
 textArea.focus();
 textArea.value = "";
 
 window.onkeydown = (e) => {
-  if ((e.key == "Tab")) {
+  if (e.key == "Tab") {
     e.preventDefault();
-    textArea.value += "\t";
+    insertTabAtSelection(textArea);
   }
 };
 
