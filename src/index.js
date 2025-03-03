@@ -1,4 +1,11 @@
-const { app, dialog, Menu, BrowserWindow, webContents } = require("electron");
+const {
+  app,
+  dialog,
+  Menu,
+  BrowserWindow,
+  webContents,
+  ipcMain,
+} = require("electron");
 const { readFile, writeFileSync } = require("node:fs");
 const path = require("node:path");
 
@@ -19,8 +26,15 @@ const setCurrentFilePath = (window, path) => {
   }
 };
 
+const getEventWindow = (e) => {
+  const webContents = e.sender;
+  const window = BrowserWindow.fromWebContents(webContents);
+  return window;
+};
+
 const newFile = (mainWindow) => {
   setCurrentFilePath(mainWindow, "");
+  mainWindow.webContents.send("new-file");
 };
 
 const openFile = async (mainWindow) => {
@@ -47,8 +61,8 @@ const showSaveFileDialog = (mainWindow) => {
     .then((result) => {
       if (!result.canceled) {
         const path = result.filePath;
-        writeFileSync(path, "testing save 123");
         setCurrentFilePath(mainWindow, path);
+        mainWindow.webContents.send("get-save-data", currentFilePath);
       }
     })
     .catch((err) => {
@@ -61,12 +75,22 @@ const saveFile = (mainWindow) => {
   if (currentFilePath === "") {
     showSaveFileDialog(mainWindow);
   } else {
-    writeFileSync(currentFilePath, "testing save 123");
+    mainWindow.webContents.send("get-save-data", currentFilePath);
   }
 };
 
 const saveFileAs = async (mainWindow) => {
   showSaveFileDialog(mainWindow);
+};
+
+const handleSave = (e, data) => {
+  if (currentFilePath === "") {
+    console.log("path was not specified in handleSave");
+    const window = getEventWindow(e);
+    showSaveFileDialog(window);
+  } else {
+    writeFileSync(currentFilePath, data);
+  }
 };
 
 const createMenuTemplate = (mainWindow) => {
@@ -161,6 +185,7 @@ const createWindow = () => {
 };
 
 app.whenReady().then(() => {
+  ipcMain.on("save-file", handleSave);
   createWindow();
 
   app.on("activate", () => {

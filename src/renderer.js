@@ -12,6 +12,17 @@ window.onkeydown = (e) => {
   }
 };
 
+window.electronAPI.onNewFile((value) => {
+  textArea.value = "";
+});
+
 window.electronAPI.onOpenFile((value) => {
   textArea.value = value;
+});
+
+window.electronAPI.onGetSaveData((value) => {
+  console.log("sending data from text area to main");
+  const data = textArea.value;
+  console.log("data is: " + data);
+  window.electronAPI.saveFile(data);
 });
