@@ -5,6 +5,11 @@ const textArea = document.getElementById("mainTextArea");
 textArea.focus();
 textArea.value = "";
 
+textArea.oninput = (e) => {
+  window.electronAPI.fileChanged();
+  console.log("textArea input changed");
+};
+
 window.onkeydown = (e) => {
   if (e.key == "Tab") {
     e.preventDefault();

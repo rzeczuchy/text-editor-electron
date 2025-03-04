@@ -14,6 +14,8 @@ if (require("electron-squirrel-startup")) {
 }
 
 let currentFilePath = null;
+let hasUnsavedChanges = false;
+const unsavedChangesMarker = "*";
 
 const setCurrentFilePath = (window, path) => {
   console.log(path);
@@ -23,6 +25,15 @@ const setCurrentFilePath = (window, path) => {
     window.setTitle("Untitled");
   } else {
     window.setTitle(path);
+  }
+};
+
+const fileSaved = (window) => {
+  hasUnsavedChanges = false;
+  const title = window.title;
+
+  if (title.slice(-1) == unsavedChangesMarker) {
+    window.setTitle(title.substring(0, title.length - 1));
   }
 };
 
@@ -84,12 +95,22 @@ const saveFileAs = async (mainWindow) => {
 };
 
 const handleSave = (e, data) => {
+  const window = getEventWindow(e);
+
   if (currentFilePath === "") {
     console.log("path was not specified in handleSave");
-    const window = getEventWindow(e);
     showSaveFileDialog(window);
   } else {
     writeFileSync(currentFilePath, data);
+    fileSaved(window);
+  }
+};
+
+const handleFileChange = (e) => {
+  if (!hasUnsavedChanges) {
+    hasUnsavedChanges = true;
+    const window = getEventWindow(e);
+    window.setTitle(window.title + unsavedChangesMarker);
   }
 };
 
@@ -186,6 +207,7 @@ const createWindow = () => {
 
 app.whenReady().then(() => {
   ipcMain.on("save-file", handleSave);
+  ipcMain.on("file-changed", handleFileChange);
   createWindow();
 
   app.on("activate", () => {
