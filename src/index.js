@@ -1,11 +1,4 @@
-const {
-  app,
-  dialog,
-  Menu,
-  BrowserWindow,
-  webContents,
-  ipcMain,
-} = require("electron");
+const { app, dialog, Menu, BrowserWindow, ipcMain } = require("electron");
 const { readFile, writeFileSync } = require("node:fs");
 const path = require("node:path");
 
@@ -28,7 +21,7 @@ const setCurrentFilePath = (window, path) => {
   }
 };
 
-const fileSaved = (window) => {
+const changesSaved = (window) => {
   hasUnsavedChanges = false;
   const title = window.title;
 
@@ -48,7 +41,7 @@ const newFile = (mainWindow) => {
   mainWindow.webContents.send("new-file");
 };
 
-const openFile = async (mainWindow) => {
+const showOpenFileDialog = (mainWindow) => {
   dialog
     .showOpenDialog({})
     .then((result) => {
@@ -58,12 +51,33 @@ const openFile = async (mainWindow) => {
           if (err) throw err;
           mainWindow.webContents.send("open-file", data);
           setCurrentFilePath(mainWindow, path);
+          changesSaved(mainWindow);
         });
       }
     })
     .catch((err) => {
       console.log(err);
     });
+};
+
+const openFile = async (mainWindow) => {
+  if (hasUnsavedChanges) {
+    const choice = confirmClosingFile(mainWindow);
+    // SAVE
+    if (choice == 0) {
+      saveFile(mainWindow);
+    }
+    // DON'T SAVE
+    if (choice == 1) {
+      showOpenFileDialog(mainWindow);
+    }
+    // CANCEL
+    if (choice == 2) {
+      return;
+    }
+  } else {
+    showOpenFileDialog(mainWindow);
+  }
 };
 
 const showSaveFileDialog = (mainWindow) => {
@@ -102,7 +116,7 @@ const handleSave = (e, data) => {
     showSaveFileDialog(window);
   } else {
     writeFileSync(currentFilePath, data);
-    fileSaved(window);
+    changesSaved(window);
   }
 };
 
@@ -114,14 +128,18 @@ const handleFileChange = (e) => {
   }
 };
 
+const confirmClosingFile = (mainWindow) => {
+  return dialog.showMessageBoxSync(mainWindow, {
+    type: "question",
+    buttons: ["Save", "Don't save", "Cancel"],
+    title: "Save your changes before closing?",
+    message: "Your file has unsaved changes. Save them before closing?.",
+  });
+};
+
 const handleClose = (e, mainWindow) => {
   if (hasUnsavedChanges) {
-    const choice = dialog.showMessageBoxSync(mainWindow, {
-      type: "question",
-      buttons: ["Save", "Don't save", "Cancel"],
-      title: "Save your changes before quitting?",
-      message: "You have unsaved changes that will be lost if you quit.",
-    });
+    const choice = confirmClosingFile(mainWindow);
     // SAVE
     if (choice == 0) {
       e.preventDefault();
