@@ -114,6 +114,26 @@ const handleFileChange = (e) => {
   }
 };
 
+const handleClose = (e, mainWindow) => {
+  if (hasUnsavedChanges) {
+    const choice = dialog.showMessageBoxSync(mainWindow, {
+      type: "question",
+      buttons: ["Save", "Don't save", "Cancel"],
+      title: "Save your changes before quitting?",
+      message: "You have unsaved changes that will be lost if you quit.",
+    });
+    // SAVE
+    if (choice == 0) {
+      e.preventDefault();
+      saveFile(mainWindow);
+    }
+    // CANCEL
+    if (choice == 2) {
+      e.preventDefault();
+    }
+  }
+};
+
 const createMenuTemplate = (mainWindow) => {
   const template = [
     // { role: 'fileMenu' }
@@ -201,6 +221,9 @@ const createWindow = () => {
   const menu = createMenuTemplate(mainWindow);
   Menu.setApplicationMenu(menu);
   setCurrentFilePath(mainWindow, "");
+  mainWindow.on("close", (e) => {
+    handleClose(e, mainWindow);
+  });
 
   mainWindow.loadFile(path.join(__dirname, "index.html"));
 };
