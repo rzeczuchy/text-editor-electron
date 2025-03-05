@@ -1,4 +1,5 @@
 const { app, dialog, Menu, BrowserWindow, ipcMain } = require("electron");
+const { isValidFilePath } = require("./mainUtils.js");
 const { readFile, writeFileSync } = require("node:fs");
 const path = require("node:path");
 
@@ -11,13 +12,14 @@ let hasUnsavedChanges = false;
 const unsavedChangesMarker = "*";
 
 const setCurrentFilePath = (window, path) => {
-  console.log(path);
-  currentFilePath = path;
-  // TODO: properly validate path
   if (path == "") {
+    currentFilePath = path;
     window.setTitle("Untitled");
-  } else {
+  } else if (isValidFilePath(path)) {
+    currentFilePath = path;
     window.setTitle(path);
+  } else {
+    throw new Error(`invalid path in setCurrentFilePath: ${path}`);
   }
 };
 
