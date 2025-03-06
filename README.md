@@ -12,6 +12,10 @@ Install node modules using `npm install`.
 
 Start the app using `npm start`.
 
+# Jest
+
+Run Jest unit tests using `npm run test`.
+
 # Distribute
 
 The app is scaffolded using Electron Forge.
