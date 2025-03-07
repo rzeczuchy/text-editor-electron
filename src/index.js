@@ -10,6 +10,10 @@ if (require("electron-squirrel-startup")) {
 let currentFilePath = null;
 let hasUnsavedChanges = false;
 const unsavedChangesMarker = "*";
+const appName = "Text Editor";
+const versionNumber = "1.0";
+const author = "rzeczuchy";
+const gitHubLink = "github.com/rzeczuchy/text-editor-electron/issues";
 
 const setCurrentFilePath = (window, path) => {
   if (path == "") {
@@ -154,6 +158,15 @@ const handleClose = (e, mainWindow) => {
   }
 };
 
+const showAboutDialog = (mainWindow) => {
+  return dialog.showMessageBox(mainWindow, {
+    type: "info",
+    buttons: ["Ok"],
+    title: appName,
+    message: `${appName}\nVersion: ${versionNumber}\nAuthor: ${author}\nSupport: ${gitHubLink}`,
+  });
+};
+
 const createMenuTemplate = (mainWindow) => {
   const template = [
     // { role: 'fileMenu' }
@@ -221,6 +234,18 @@ const createMenuTemplate = (mainWindow) => {
         { role: "reload" },
         { role: "forceReload" },
         { role: "toggleDevTools" },
+      ],
+    },
+    // { role: 'helpMenu'}
+    {
+      label: "Help",
+      submenu: [
+        {
+          label: "About",
+          click: () => {
+            showAboutDialog(mainWindow);
+          },
+        },
       ],
     },
   ];
