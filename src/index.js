@@ -10,8 +10,8 @@ if (require("electron-squirrel-startup")) {
 let currentFilePath = null;
 let hasUnsavedChanges = false;
 const unsavedChangesMarker = "*";
-const appName = "Text Editor";
-const versionNumber = "1.0";
+const appName = app.getName();
+const versionNumber = app.getVersion();
 const author = "rzeczuchy";
 const gitHubLink = "github.com/rzeczuchy/text-editor-electron/issues";
 
@@ -47,18 +47,22 @@ const newFile = (mainWindow) => {
   mainWindow.webContents.send("new-file");
 };
 
+const readFileFromPath = (path, mainWindow) => {
+  readFile(path, "utf8", (err, data) => {
+    if (err) throw err;
+    mainWindow.webContents.send("open-file", data);
+    setCurrentFilePath(mainWindow, path);
+    changesSaved(mainWindow);
+  });
+};
+
 const showOpenFileDialog = (mainWindow) => {
   dialog
     .showOpenDialog({})
     .then((result) => {
       if (!result.canceled) {
         const path = result.filePaths[0];
-        readFile(path, "utf8", (err, data) => {
-          if (err) throw err;
-          mainWindow.webContents.send("open-file", data);
-          setCurrentFilePath(mainWindow, path);
-          changesSaved(mainWindow);
-        });
+        readFileFromPath(path, mainWindow);
       }
     })
     .catch((err) => {
@@ -254,6 +258,14 @@ const createMenuTemplate = (mainWindow) => {
   return menu;
 };
 
+const openingAnotherFile = (process) => {
+  return (
+    process.argv.length >= 2 &&
+    process.argv[1] != "." &&
+    process.argv[1] != "--squirrel-firstrun"
+  );
+};
+
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 800,
@@ -268,6 +280,15 @@ const createWindow = () => {
   setCurrentFilePath(mainWindow, "");
   mainWindow.on("close", (e) => {
     handleClose(e, mainWindow);
+  });
+
+  // When "open file with" is used on Windows, this takes the file path
+  // from process.argv and opens the file on app startup.
+  mainWindow.webContents.once("dom-ready", () => {
+    if (openingAnotherFile(process)) {
+      const path = process.argv[1];
+      readFileFromPath(path, mainWindow);
+    }
   });
 
   mainWindow.loadFile(path.join(__dirname, "index.html"));

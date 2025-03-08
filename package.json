@@ -1,8 +1,8 @@
 {
   "name": "text-editor-electron",
-  "productName": "text-editor-electron",
+  "productName": "Text Editor Electron",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "Text editor written in Node.js with Electron.",
   "main": "src/index.js",
   "scripts": {
     "start": "electron-forge start",
@@ -13,7 +13,7 @@
     "test": "jest"
   },
   "keywords": [],
-  "author": "jagie",
+  "author": "rzeczuchy",
   "license": "MIT",
   "dependencies": {
     "electron-squirrel-startup": "^1.0.1"
